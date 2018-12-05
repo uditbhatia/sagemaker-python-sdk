@@ -262,7 +262,8 @@ class _SageMakerContainer(object):
 
         resource_config = {
             'current_host': host,
-            'hosts': self.hosts
+            'hosts': self.hosts,
+            'network_interface_name': 'eth0'
         }
 
         json_input_data_config = {}

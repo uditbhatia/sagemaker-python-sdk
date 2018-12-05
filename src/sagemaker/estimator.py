@@ -734,6 +734,10 @@ class Framework(EstimatorBase):
 
     __framework_name__ = None
     LAUNCH_PS_ENV_NAME = 'sagemaker_parameter_server_enabled'
+    LAUNCH_MPI_ENV_NAME = 'sagemaker_mpi_enabled'
+    LAUNCH_MPI_CUSTOM_OPTIONS = 'sagemaker_mpi_custom_options'
+    LAUNCH_MPI_PROCESSES_PER_HOST = 'sagemaker_mpi_processes_per_host'
+    LAUNCH_MPI_ENV_NAME = 'sagemaker_mpi_enabled'
 
     def __init__(self, entry_point, source_dir=None, hyperparameters=None, enable_cloudwatch_metrics=False,
                  container_log_level=logging.INFO, code_location=None, image_name=None, dependencies=None, **kwargs):

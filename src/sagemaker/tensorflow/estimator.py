@@ -426,6 +426,15 @@ class TensorFlow(Framework):
             if 'parameter_server' in self.distributions:
                 enabled = self.distributions['parameter_server'].get('enabled', False)
                 additional_hyperparameters[self.LAUNCH_PS_ENV_NAME] = enabled
+            if 'mpi' in self.distributions:
+                enabled = self.distributions['mpi'].get('enabled', False)
+                custom_mpi_options = self.distributions['mpi'].get('custom_mpi_options', None)
+                processes_per_host = self.distributions['mpi'].get('processes_per_host', None)
+                additional_hyperparameters[self.LAUNCH_MPI_ENV_NAME] = enabled
+                if custom_mpi_options:
+                    additional_hyperparameters[self.LAUNCH_MPI_CUSTOM_OPTIONS] = custom_mpi_options
+                if processes_per_host:
+                    additional_hyperparameters[self.LAUNCH_MPI_PROCESSES_PER_HOST] = processes_per_host
         else:
             additional_hyperparameters = {'checkpoint_path': self.checkpoint_path,
                                           'training_steps': self.training_steps,
