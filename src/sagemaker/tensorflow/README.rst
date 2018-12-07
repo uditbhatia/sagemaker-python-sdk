@@ -278,7 +278,44 @@ Optional:
   If not specified a S3 location will be generated under the training job's default bucket. And ``model_dir`` will be
   passed in your training script as one of the command line arguments.
 - ``distributions (dict)`` Configure your distrubtion strategy with this argument. For launching parameter server for
-  for distributed training, you must set ``distributions`` to ``{'parameter_server': {'enabled': True}}``
+  for distributed training, you must set ``distributions`` to ``{'parameter_server': {'enabled': True}}``. Or, for
+  launching Horovod distributed training, you must set ``distributions`` to ``{'mpi': {'enabled': True}}``. PLease refer
+  below section ``Training with Horovod`` for more details.
+
+Training with Horovod
+~~~~~~~~~~~~~~~~~~~~~
+
+Horovod is thew distributed training framework based on MPI. For more details refer: https://github.com/uber/horovod
+
+SageMaker Learner setup the MPI environment and executes the `mpirun` command enabling you to run any horovod training script
+with the script mode.
+
+In estimator,  `distribution` argument allows you to confgure distribution strategy, where `mpi` training can be
+configured by specifying following fields:
+
+- ``enabled (bool)``: If set to `True`, the MPI setup is performed and mpirun command is executed.
+- ``processes_per_host (int)``: The number of processes the MPI should launch on each host. Note, this should not be
+  greater than the available slots on the selected instance type.
+- ``custom_mpi_options (str)``: MPI run command can be customized by passing in command line arguments to this field.
+  The format for the passed in value should be same as command line arguments, like: ``--NCCL_DEBUG INFO``
+
+In the below example we create an estimator to launch horovod distributed training with 2 processes per host:
+
+.. code:: python
+
+    from sagemaker.tensorflow import TensorFlow
+
+    tf_estimator = TensorFlow(entry_point='tf-train.py', role='SageMakerRole',
+                            train_instance_count=1, train_instance_type='ml.p2.xlarge',
+                            framework_version='1.11', py_version='py3',
+                            distribution: {
+                                "mpi":{
+                                    "enabled":True,
+                                    "processes_per_host":2,
+                                    "custom_mpi_options": "--NCCL_DEBUG INFO"
+                                }
+                            })
+    tf_estimator.fit('s3://bucket/path/to/training/data')
 
 Training with Pipe Mode using PipeModeDataset
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
